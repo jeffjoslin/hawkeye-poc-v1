@@ -75,6 +75,7 @@ export default function Profile01({
                 width={72}
                 height={72}
                 className="rounded-full ring-4 ring-white dark:ring-zinc-900 object-cover"
+                priority
               />
               <div className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-zinc-900" />
             </div>
@@ -173,4 +174,3 @@ export default function Profile01({
     </div>
   )
 }
-

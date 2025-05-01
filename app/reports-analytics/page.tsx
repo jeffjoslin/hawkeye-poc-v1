@@ -3,4 +3,3 @@ import ReportsAnalyticsPage from "@/components/kokonutui/reports-analytics/repor
 export default function ReportsAnalytics() {
   return <ReportsAnalyticsPage />
 }
-

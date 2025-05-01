@@ -44,7 +44,7 @@ import { format } from "date-fns"
 import UploadSessionForm from "./upload-session-form"
 import Link from "next/link"
 
-// Sample data for the sessions
+// Sample data for the sessions - updated to use only green, yellow, and red statuses
 const sampleSessions = [
   {
     id: "RS-1001",
@@ -142,7 +142,7 @@ const sampleSessions = [
     organization: "TechSolutions LLC",
     date: "2025-03-24T13:10:00",
     duration: "37m",
-    status: "orange",
+    status: "yellow", // Changed from orange to yellow
     title: "Network Configuration",
     goals: "Update network security settings for development servers",
     summary:
@@ -160,7 +160,7 @@ const sampleSessions = [
     organization: "Global Banking Corp",
     date: "2025-03-23T09:22:00",
     duration: "45m",
-    status: "purple",
+    status: "yellow", // Changed from purple to yellow
     title: "Customer Account Review",
     goals: "Review flagged customer accounts for suspicious transactions",
     summary:
@@ -182,7 +182,7 @@ export default function RemoteSessionsContent() {
     date: null as Date | null,
     user: "",
     organization: "",
-    status: "" as "" | "green" | "yellow" | "red" | "orange" | "purple",
+    status: "" as "" | "green" | "yellow" | "red",
   })
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
@@ -270,27 +270,7 @@ export default function RemoteSessionsContent() {
             className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800"
           >
             <AlertTriangle className="w-3.5 h-3.5 mr-1" />
-            Concerns
-          </Badge>
-        )
-      case "orange":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 border-orange-200 dark:border-orange-800"
-          >
-            <AlertTriangle className="w-3.5 h-3.5 mr-1" />
             Security Risk
-          </Badge>
-        )
-      case "purple":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border-purple-200 dark:border-purple-800"
-          >
-            <AlertTriangle className="w-3.5 h-3.5 mr-1" />
-            Suspicious Activity
           </Badge>
         )
       case "red":
@@ -312,7 +292,7 @@ export default function RemoteSessionsContent() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Remote Sessions</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Remote Sessions</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Manage and analyze remote desktop session recordings
           </p>
@@ -418,25 +398,7 @@ export default function RemoteSessionsContent() {
                         className={filters.status === "yellow" ? "bg-amber-600 hover:bg-amber-700" : ""}
                       >
                         <AlertTriangle className="w-4 h-4 mr-1" />
-                        Concerns
-                      </Button>
-                      <Button
-                        variant={filters.status === "orange" ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setFilters({ ...filters, status: filters.status === "orange" ? "" : "orange" })}
-                        className={filters.status === "orange" ? "bg-orange-600 hover:bg-orange-700" : ""}
-                      >
-                        <AlertTriangle className="w-4 h-4 mr-1" />
                         Security Risk
-                      </Button>
-                      <Button
-                        variant={filters.status === "purple" ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setFilters({ ...filters, status: filters.status === "purple" ? "" : "purple" })}
-                        className={filters.status === "purple" ? "bg-purple-600 hover:bg-purple-700" : ""}
-                      >
-                        <AlertTriangle className="w-4 h-4 mr-1" />
-                        Suspicious Activity
                       </Button>
                       <Button
                         variant={filters.status === "red" ? "default" : "outline"}
@@ -494,9 +456,7 @@ export default function RemoteSessionsContent() {
             <TabsList className="mb-4">
               <TabsTrigger value="all">All Sessions</TabsTrigger>
               <TabsTrigger value="compliant">Compliant</TabsTrigger>
-              <TabsTrigger value="concerns">Concerns</TabsTrigger>
               <TabsTrigger value="security-risk">Security Risk</TabsTrigger>
-              <TabsTrigger value="suspicious">Suspicious Activity</TabsTrigger>
               <TabsTrigger value="violations">Violations</TabsTrigger>
             </TabsList>
 
@@ -745,11 +705,10 @@ export default function RemoteSessionsContent() {
               </div>
             </TabsContent>
 
-            <TabsContent value="concerns">
+            <TabsContent value="security-risk">
               <div className="overflow-hidden rounded-md border border-gray-200 dark:border-[#1F1F23]">
                 <div className="relative w-full overflow-auto">
                   <table className="w-full caption-bottom text-sm">
-                    {/* Same table structure as above, but filtered for sessions with concerns */}
                     <thead className="[&_tr]:border-b">
                       <tr className="border-b border-gray-200 dark:border-[#1F1F23] bg-gray-50 dark:bg-[#1F1F23]/50">
                         <th className="h-10 w-[40px] px-2 text-left align-middle">
@@ -767,7 +726,7 @@ export default function RemoteSessionsContent() {
                                 setSelectedSessions([])
                               }
                             }}
-                            aria-label="Select all sessions with concerns"
+                            aria-label="Select all security risk sessions"
                           />
                         </th>
                         <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
@@ -864,263 +823,7 @@ export default function RemoteSessionsContent() {
                       ) : (
                         <tr>
                           <td colSpan={8} className="p-4 text-center text-gray-500 dark:text-gray-400">
-                            No sessions with concerns found. Try adjusting your filters.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="security-risk">
-              <div className="overflow-hidden rounded-md border border-gray-200 dark:border-[#1F1F23]">
-                <div className="relative w-full overflow-auto">
-                  <table className="w-full caption-bottom text-sm">
-                    <thead className="[&_tr]:border-b">
-                      <tr className="border-b border-gray-200 dark:border-[#1F1F23] bg-gray-50 dark:bg-[#1F1F23]/50">
-                        <th className="h-10 w-[40px] px-2 text-left align-middle">
-                          <Checkbox
-                            checked={
-                              filteredSessions.filter((s) => s.status === "orange").length > 0 &&
-                              selectedSessions.length === filteredSessions.filter((s) => s.status === "orange").length
-                            }
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                setSelectedSessions(
-                                  filteredSessions.filter((s) => s.status === "orange").map((s) => s.id),
-                                )
-                              } else {
-                                setSelectedSessions([])
-                              }
-                            }}
-                            aria-label="Select all security risk sessions"
-                          />
-                        </th>
-                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
-                          Session ID
-                        </th>
-                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
-                          User/Admin
-                        </th>
-                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
-                          Organization
-                        </th>
-                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
-                          Date/Time
-                        </th>
-                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
-                          Status
-                        </th>
-                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
-                          Summary
-                        </th>
-                        <th className="h-10 px-2 text-right align-middle font-medium text-gray-500 dark:text-gray-400">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="[&_tr:last-child]:border-0">
-                      {filteredSessions.filter((s) => s.status === "orange").length > 0 ? (
-                        filteredSessions
-                          .filter((s) => s.status === "orange")
-                          .map((session) => (
-                            <tr
-                              key={session.id}
-                              className="border-b border-gray-200 dark:border-[#1F1F23] hover:bg-gray-50 dark:hover:bg-[#1F1F23]/50 transition-colors"
-                            >
-                              <td className="p-2 align-middle">
-                                <Checkbox
-                                  checked={selectedSessions.includes(session.id)}
-                                  onCheckedChange={(checked) => handleSelectSession(session.id, checked === true)}
-                                  aria-label={`Select session ${session.id}`}
-                                />
-                              </td>
-                              <td className="p-2 align-middle font-medium">{session.id}</td>
-                              <td className="p-2 align-middle">{session.user}</td>
-                              <td className="p-2 align-middle">{session.organization}</td>
-                              <td className="p-2 align-middle text-gray-500 dark:text-gray-400">
-                                {format(new Date(session.date), "MMM d, yyyy h:mm a")}
-                              </td>
-                              <td className="p-2 align-middle">
-                                <StatusBadge status={session.status} />
-                              </td>
-                              <td className="p-2 align-middle">
-                                <p className="truncate max-w-[200px] text-xs text-gray-500 dark:text-gray-400">
-                                  {session.summary}
-                                </p>
-                              </td>
-                              <td className="p-2 align-middle text-right">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                      <span className="sr-only">Open menu</span>
-                                      <ChevronDown className="h-4 w-4" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                    <DropdownMenuGroup>
-                                      <DropdownMenuItem asChild>
-                                        <Link href={`/remote-sessions/${session.id}`}>
-                                          <Eye className="mr-2 h-4 w-4" />
-                                          <span>View Details</span>
-                                        </Link>
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem>
-                                        <Download className="mr-2 h-4 w-4" />
-                                        <span>Download</span>
-                                      </DropdownMenuItem>
-                                    </DropdownMenuGroup>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem
-                                      className="text-red-600 dark:text-red-400"
-                                      onClick={() => {
-                                        setSelectedSessions([session.id])
-                                        setIsDeleteDialogOpen(true)
-                                      }}
-                                    >
-                                      <Trash2 className="mr-2 h-4 w-4" />
-                                      <span>Delete</span>
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </td>
-                            </tr>
-                          ))
-                      ) : (
-                        <tr>
-                          <td colSpan={8} className="p-4 text-center text-gray-500 dark:text-gray-400">
                             No security risk sessions found. Try adjusting your filters.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="suspicious">
-              <div className="overflow-hidden rounded-md border border-gray-200 dark:border-[#1F1F23]">
-                <div className="relative w-full overflow-auto">
-                  <table className="w-full caption-bottom text-sm">
-                    <thead className="[&_tr]:border-b">
-                      <tr className="border-b border-gray-200 dark:border-[#1F1F23] bg-gray-50 dark:bg-[#1F1F23]/50">
-                        <th className="h-10 w-[40px] px-2 text-left align-middle">
-                          <Checkbox
-                            checked={
-                              filteredSessions.filter((s) => s.status === "purple").length > 0 &&
-                              selectedSessions.length === filteredSessions.filter((s) => s.status === "purple").length
-                            }
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                setSelectedSessions(
-                                  filteredSessions.filter((s) => s.status === "purple").map((s) => s.id),
-                                )
-                              } else {
-                                setSelectedSessions([])
-                              }
-                            }}
-                            aria-label="Select all suspicious activity sessions"
-                          />
-                        </th>
-                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
-                          Session ID
-                        </th>
-                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
-                          User/Admin
-                        </th>
-                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
-                          Organization
-                        </th>
-                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
-                          Date/Time
-                        </th>
-                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
-                          Status
-                        </th>
-                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
-                          Summary
-                        </th>
-                        <th className="h-10 px-2 text-right align-middle font-medium text-gray-500 dark:text-gray-400">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="[&_tr:last-child]:border-0">
-                      {filteredSessions.filter((s) => s.status === "purple").length > 0 ? (
-                        filteredSessions
-                          .filter((s) => s.status === "purple")
-                          .map((session) => (
-                            <tr
-                              key={session.id}
-                              className="border-b border-gray-200 dark:border-[#1F1F23] hover:bg-gray-50 dark:hover:bg-[#1F1F23]/50 transition-colors"
-                            >
-                              <td className="p-2 align-middle">
-                                <Checkbox
-                                  checked={selectedSessions.includes(session.id)}
-                                  onCheckedChange={(checked) => handleSelectSession(session.id, checked === true)}
-                                  aria-label={`Select session ${session.id}`}
-                                />
-                              </td>
-                              <td className="p-2 align-middle font-medium">{session.id}</td>
-                              <td className="p-2 align-middle">{session.user}</td>
-                              <td className="p-2 align-middle">{session.organization}</td>
-                              <td className="p-2 align-middle text-gray-500 dark:text-gray-400">
-                                {format(new Date(session.date), "MMM d, yyyy h:mm a")}
-                              </td>
-                              <td className="p-2 align-middle">
-                                <StatusBadge status={session.status} />
-                              </td>
-                              <td className="p-2 align-middle">
-                                <p className="truncate max-w-[200px] text-xs text-gray-500 dark:text-gray-400">
-                                  {session.summary}
-                                </p>
-                              </td>
-                              <td className="p-2 align-middle text-right">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                      <span className="sr-only">Open menu</span>
-                                      <ChevronDown className="h-4 w-4" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                    <DropdownMenuGroup>
-                                      <DropdownMenuItem asChild>
-                                        <Link href={`/remote-sessions/${session.id}`}>
-                                          <Eye className="mr-2 h-4 w-4" />
-                                          <span>View Details</span>
-                                        </Link>
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem>
-                                        <Download className="mr-2 h-4 w-4" />
-                                        <span>Download</span>
-                                      </DropdownMenuItem>
-                                    </DropdownMenuGroup>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem
-                                      className="text-red-600 dark:text-red-400"
-                                      onClick={() => {
-                                        setSelectedSessions([session.id])
-                                        setIsDeleteDialogOpen(true)
-                                      }}
-                                    >
-                                      <Trash2 className="mr-2 h-4 w-4" />
-                                      <span>Delete</span>
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </td>
-                            </tr>
-                          ))
-                      ) : (
-                        <tr>
-                          <td colSpan={8} className="p-4 text-center text-gray-500 dark:text-gray-400">
-                            No suspicious activity sessions found. Try adjusting your filters.
                           </td>
                         </tr>
                       )}
@@ -1134,7 +837,6 @@ export default function RemoteSessionsContent() {
               <div className="overflow-hidden rounded-md border border-gray-200 dark:border-[#1F1F23]">
                 <div className="relative w-full overflow-auto">
                   <table className="w-full caption-bottom text-sm">
-                    {/* Same table structure as above, but filtered for violation sessions */}
                     <thead className="[&_tr]:border-b">
                       <tr className="border-b border-gray-200 dark:border-[#1F1F23] bg-gray-50 dark:bg-[#1F1F23]/50">
                         <th className="h-10 w-[40px] px-2 text-left align-middle">
@@ -1265,4 +967,3 @@ export default function RemoteSessionsContent() {
 
 // Import the Calendar component
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
-

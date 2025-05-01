@@ -1,28 +1,21 @@
 "use client"
 
-import { Badge } from "@/components/ui/badge"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
-import { format, subDays, subMonths } from "date-fns"
+import { Badge } from "@/components/ui/badge"
+import { subDays } from "date-fns"
 import {
   BarChart2,
-  FileText,
   Download,
   Filter,
   CalendarIcon,
-  ChevronDown,
   Users,
   Building,
   AlertTriangle,
-  FileDown,
-  Share2,
   PieChart,
   LineChart,
   BarChart,
@@ -43,126 +36,121 @@ import {
   Line,
 } from "recharts"
 
-// Sample data for the charts
-const sessionsByDateData = [
-  { date: "Mar 21", total: 17, green: 9, yellow: 3, orange: 2, purple: 2, red: 1 },
-  { date: "Mar 22", total: 20, green: 12, yellow: 3, orange: 3, purple: 1, red: 1 },
-  { date: "Mar 23", total: 23, green: 15, yellow: 3, orange: 2, purple: 2, red: 1 },
-  { date: "Mar 24", total: 23, green: 11, yellow: 4, orange: 3, purple: 3, red: 2 },
-  { date: "Mar 25", total: 22, green: 13, yellow: 3, orange: 2, purple: 2, red: 2 },
-  { date: "Mar 26", total: 22, green: 10, yellow: 4, orange: 3, purple: 2, red: 3 },
-  { date: "Mar 27", total: 21, green: 12, yellow: 3, orange: 2, purple: 3, red: 1 },
-]
+// Add error boundary to handle resource loading issues
+const ReportsAnalyticsContent = () => {
+  const [loadError, setLoadError] = useState(false)
 
-// Find the statusDistributionData and update it to include the new status types
-const statusDistributionData = [
-  { name: "Compliant", value: 82, color: "#10b981" },
-  { name: "Concerns", value: 23, color: "#f59e0b" },
-  { name: "Security Risk", value: 17, color: "#f97316" },
-  { name: "Suspicious Activity", value: 15, color: "#a855f7" },
-  { name: "Violations", value: 11, color: "#ef4444" },
-]
+  // Add error handling for chart rendering
+  useEffect(() => {
+    window.addEventListener("error", (e) => {
+      if (e.message.includes("Failed to load") || e.message.includes("blob:")) {
+        setLoadError(true)
+        console.error("Resource loading error:", e.message)
+      }
+    })
 
-const complianceTrendData = [
-  { month: "Jan", complianceRate: 72 },
-  { month: "Feb", complianceRate: 68 },
-  { month: "Mar", complianceRate: 75 },
-  { month: "Apr", complianceRate: 82 },
-  { month: "May", complianceRate: 79 },
-  { month: "Jun", complianceRate: 85 },
-]
+    return () => {
+      window.removeEventListener("error", () => {})
+    }
+  }, [])
 
-const topViolationsData = [
-  { name: "Unauthorized data export", count: 8 },
-  { name: "Accessing sensitive records", count: 6 },
-  { name: "Exceeding declared scope", count: 5 },
-  { name: "Unusual login times", count: 3 },
-  { name: "Clearing system logs", count: 2 },
-]
+  // Sample data for the sessions chart - Updated to use new status types
+  const sessionsByDateData = [
+    { date: "Mar 21", total: 17, green: 9, yellow: 5, red: 3 },
+    { date: "Mar 22", total: 20, green: 12, yellow: 5, red: 3 },
+    { date: "Mar 23", total: 23, green: 15, yellow: 5, red: 3 },
+    { date: "Mar 24", total: 23, green: 11, yellow: 8, red: 4 },
+    { date: "Mar 25", total: 22, green: 13, yellow: 6, red: 3 },
+    { date: "Mar 26", total: 22, green: 10, yellow: 7, red: 5 },
+    { date: "Mar 27", total: 21, green: 12, yellow: 6, red: 3 },
+  ]
 
-const organizationComplianceData = [
-  { name: "Acme Financial", compliant: 35, concerns: 8, violations: 2 },
-  { name: "HealthPlus Inc", compliant: 28, concerns: 12, violations: 5 },
-  { name: "TechSolutions LLC", compliant: 22, concerns: 6, violations: 4 },
-  { name: "Global Banking", compliant: 20, concerns: 4, violations: 2 },
-]
+  // Updated status distribution data with consolidated categories
+  const statusDistributionData = [
+    { name: "Compliant", value: 82, color: "#10b981" },
+    { name: "Security Risk", value: 55, color: "#eab308" }, // Combined Concerns, Security Risk, and Suspicious Activity
+    { name: "Violations", value: 11, color: "#ef4444" },
+  ]
 
-// Sample data for red-flagged sessions
-const redFlaggedSessions = [
-  {
-    id: "RS-1003",
-    user: "Michael Chen",
-    organization: "TechSolutions LLC",
-    date: "Mar 26, 2025",
-    status: "red",
-    issue: "Exported customer data to external device",
-  },
-  {
-    id: "RS-1015",
-    user: "Jessica Williams",
-    organization: "HealthPlus Inc",
-    date: "Mar 25, 2025",
-    status: "red",
-    issue: "Accessed patient records outside authorized scope",
-  },
-  {
-    id: "RS-1022",
-    user: "David Wilson",
-    organization: "Acme Financial",
-    date: "Mar 24, 2025",
-    status: "red",
-    issue: "Attempted to clear system logs after accessing sensitive data",
-  },
-]
+  // Compliance trend data
+  const complianceTrendData = [
+    { month: "Jan", complianceRate: 72 },
+    { month: "Feb", complianceRate: 68 },
+    { month: "Mar", complianceRate: 75 },
+    { month: "Apr", complianceRate: 82 },
+    { month: "May", complianceRate: 79 },
+    { month: "Jun", complianceRate: 85 },
+  ]
 
-export default function ReportsAnalyticsContent() {
-  const [dateRange, setDateRange] = useState<{
-    from: Date
-    to: Date
-  }>({
+  // Updated organization compliance data with consolidated categories
+  const organizationComplianceData = [
+    { name: "Acme Financial", compliant: 35, securityRisk: 8, violations: 2 },
+    { name: "HealthPlus Inc", compliant: 28, securityRisk: 12, violations: 5 },
+    { name: "TechSolutions LLC", compliant: 22, securityRisk: 6, violations: 4 },
+    { name: "Global Banking", compliant: 20, securityRisk: 4, violations: 2 },
+  ]
+
+  // Sample data for red-flagged sessions
+  const redFlaggedSessions = [
+    {
+      id: "RS-1003",
+      user: "Michael Chen",
+      organization: "TechSolutions LLC",
+      date: "Mar 26, 2025",
+      status: "red",
+      issue: "Exported customer data to external device",
+    },
+    {
+      id: "RS-1015",
+      user: "Jessica Williams",
+      organization: "HealthPlus Inc",
+      date: "Mar 25, 2025",
+      status: "red",
+      issue: "Accessed patient records outside authorized scope",
+    },
+    {
+      id: "RS-1022",
+      user: "David Wilson",
+      organization: "Acme Financial",
+      date: "Mar 24, 2025",
+      status: "red",
+      issue: "Attempted to clear system logs after accessing sensitive data",
+    },
+  ]
+
+  // Top violations data
+  const topViolationsData = [
+    { name: "Unauthorized data export", count: 8 },
+    { name: "Accessing sensitive records", count: 6 },
+    { name: "Exceeding declared scope", count: 5 },
+    { name: "Unusual login times", count: 3 },
+    { name: "Clearing system logs", count: 2 },
+  ]
+
+  // Complete component with all charts
+  const [dateRange, setDateRange] = useState({
     from: subDays(new Date(), 7),
     to: new Date(),
   })
 
-  const [selectedOrganization, setSelectedOrganization] = useState<string>("all")
-  const [selectedUser, setSelectedUser] = useState<string>("all")
+  const [selectedOrganization, setSelectedOrganization] = useState("all")
+  const [selectedUser, setSelectedUser] = useState("all")
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Reports & Analytics</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Reports & Analytics</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">Analyze compliance trends and generate insights</p>
         </div>
         <div className="flex items-center gap-2">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className="gap-2 dark:bg-[#1F1F23] dark:text-white dark:hover:bg-[#2B2B30] dark:border-[#2B2B30]"
-              >
-                <Download className="w-4 h-4" />
-                Export Report
-                <ChevronDown className="w-3 h-3 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-56" align="end">
-              <div className="space-y-1">
-                <Button variant="ghost" className="w-full justify-start gap-2">
-                  <FileDown className="w-4 h-4" />
-                  Export as PDF
-                </Button>
-                <Button variant="ghost" className="w-full justify-start gap-2">
-                  <FileDown className="w-4 h-4" />
-                  Export as CSV
-                </Button>
-                <Button variant="ghost" className="w-full justify-start gap-2">
-                  <Share2 className="w-4 h-4" />
-                  Share Report
-                </Button>
-              </div>
-            </PopoverContent>
-          </Popover>
+          <Button
+            variant="outline"
+            className="gap-2 dark:bg-[#1F1F23] dark:text-white dark:hover:bg-[#2B2B30] dark:border-[#2B2B30]"
+          >
+            <Download className="w-4 h-4" />
+            Export Report
+          </Button>
         </div>
       </div>
 
@@ -179,52 +167,10 @@ export default function ReportsAnalyticsContent() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
               <Label htmlFor="date-range">Date Range</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    id="date-range"
-                    variant="outline"
-                    className="w-full justify-start text-left font-normal gap-2"
-                  >
-                    <CalendarIcon className="w-4 h-4" />
-                    {dateRange.from ? (
-                      dateRange.to ? (
-                        <>
-                          {format(dateRange.from, "LLL dd, y")} - {format(dateRange.to, "LLL dd, y")}
-                        </>
-                      ) : (
-                        format(dateRange.from, "LLL dd, y")
-                      )
-                    ) : (
-                      <span>Pick a date range</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="range"
-                    selected={dateRange}
-                    onSelect={(range) => range && setDateRange(range)}
-                    initialFocus
-                  />
-                  <div className="flex items-center justify-between p-3 border-t border-gray-200 dark:border-[#1F1F23]">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setDateRange({ from: subDays(new Date(), 7), to: new Date() })}
-                    >
-                      Last 7 days
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setDateRange({ from: subMonths(new Date(), 1), to: new Date() })}
-                    >
-                      Last 30 days
-                    </Button>
-                  </div>
-                </PopoverContent>
-              </Popover>
+              <Button id="date-range" variant="outline" className="w-full justify-start text-left font-normal gap-2">
+                <CalendarIcon className="w-4 h-4" />
+                Last 7 days
+              </Button>
             </div>
 
             <div className="space-y-2">
@@ -298,7 +244,7 @@ export default function ReportsAnalyticsContent() {
         </Card>
       </div>
 
-      {/* Charts */}
+      {/* Tabs with all charts */}
       <Tabs defaultValue="sessions" className="space-y-6">
         <TabsList>
           <TabsTrigger value="sessions" className="gap-2">
@@ -330,20 +276,24 @@ export default function ReportsAnalyticsContent() {
             </CardHeader>
             <CardContent>
               <div className="h-[400px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsBarChart data={sessionsByDateData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="green" name="Compliant" fill="#10b981" stackId="a" />
-                    <Bar dataKey="yellow" name="Concerns" fill="#f59e0b" stackId="a" />
-                    <Bar dataKey="orange" name="Security Risk" fill="#f97316" stackId="a" />
-                    <Bar dataKey="purple" name="Suspicious Activity" fill="#a855f7" stackId="a" />
-                    <Bar dataKey="red" name="Violations" fill="#ef4444" stackId="a" />
-                  </RechartsBarChart>
-                </ResponsiveContainer>
+                {loadError ? (
+                  <div className="flex items-center justify-center h-[400px] w-full">
+                    <p className="text-gray-500">Chart data could not be loaded</p>
+                  </div>
+                ) : (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RechartsBarChart data={sessionsByDateData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                      <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                      <XAxis dataKey="date" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="green" name="Compliant" fill="#10b981" stackId="a" />
+                      <Bar dataKey="yellow" name="Security Risk" fill="#eab308" stackId="a" />
+                      <Bar dataKey="red" name="Violations" fill="#ef4444" stackId="a" />
+                    </RechartsBarChart>
+                  </ResponsiveContainer>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -360,26 +310,32 @@ export default function ReportsAnalyticsContent() {
             </CardHeader>
             <CardContent>
               <div className="h-[400px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsPieChart>
-                    <Pie
-                      data={statusDistributionData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={150}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {statusDistributionData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(value) => [`${value} sessions`, "Count"]} />
-                    <Legend />
-                  </RechartsPieChart>
-                </ResponsiveContainer>
+                {loadError ? (
+                  <div className="flex items-center justify-center h-[400px] w-full">
+                    <p className="text-gray-500">Chart data could not be loaded</p>
+                  </div>
+                ) : (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RechartsPieChart>
+                      <Pie
+                        data={statusDistributionData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={150}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {statusDistributionData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value) => [`${value} sessions`, "Count"]} />
+                      <Legend />
+                    </RechartsPieChart>
+                  </ResponsiveContainer>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -396,24 +352,30 @@ export default function ReportsAnalyticsContent() {
             </CardHeader>
             <CardContent>
               <div className="h-[400px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsLineChart data={complianceTrendData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                    <XAxis dataKey="month" />
-                    <YAxis domain={[0, 100]} />
-                    <Tooltip formatter={(value) => [`${value}%`, "Compliance Rate"]} />
-                    <Legend />
-                    <Line
-                      type="monotone"
-                      dataKey="complianceRate"
-                      name="Compliance Rate"
-                      stroke="#3b82f6"
-                      strokeWidth={2}
-                      dot={{ r: 4 }}
-                      activeDot={{ r: 6 }}
-                    />
-                  </RechartsLineChart>
-                </ResponsiveContainer>
+                {loadError ? (
+                  <div className="flex items-center justify-center h-[400px] w-full">
+                    <p className="text-gray-500">Chart data could not be loaded</p>
+                  </div>
+                ) : (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RechartsLineChart data={complianceTrendData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                      <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                      <XAxis dataKey="month" />
+                      <YAxis domain={[0, 100]} />
+                      <Tooltip formatter={(value) => [`${value}%`, "Compliance Rate"]} />
+                      <Legend />
+                      <Line
+                        type="monotone"
+                        dataKey="complianceRate"
+                        name="Compliance Rate"
+                        stroke="#3b82f6"
+                        strokeWidth={2}
+                        dot={{ r: 4 }}
+                        activeDot={{ r: 6 }}
+                      />
+                    </RechartsLineChart>
+                  </ResponsiveContainer>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -430,22 +392,28 @@ export default function ReportsAnalyticsContent() {
             </CardHeader>
             <CardContent>
               <div className="h-[400px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsBarChart
-                    data={organizationComplianceData}
-                    margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-                    layout="vertical"
-                  >
-                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                    <XAxis type="number" />
-                    <YAxis type="category" dataKey="name" width={150} />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="compliant" name="Compliant" fill="#10b981" stackId="a" />
-                    <Bar dataKey="concerns" name="Concerns" fill="#f59e0b" stackId="a" />
-                    <Bar dataKey="violations" name="Violations" fill="#ef4444" stackId="a" />
-                  </RechartsBarChart>
-                </ResponsiveContainer>
+                {loadError ? (
+                  <div className="flex items-center justify-center h-[400px] w-full">
+                    <p className="text-gray-500">Chart data could not be loaded</p>
+                  </div>
+                ) : (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RechartsBarChart
+                      data={organizationComplianceData}
+                      margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                      layout="vertical"
+                    >
+                      <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                      <XAxis type="number" />
+                      <YAxis type="category" dataKey="name" width={150} />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="compliant" name="Compliant" fill="#10b981" stackId="a" />
+                      <Bar dataKey="securityRisk" name="Security Risk" fill="#eab308" stackId="a" />
+                      <Bar dataKey="violations" name="Violations" fill="#ef4444" stackId="a" />
+                    </RechartsBarChart>
+                  </ResponsiveContainer>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -535,10 +503,7 @@ export default function ReportsAnalyticsContent() {
       {/* Export Options */}
       <Card className="bg-white dark:bg-[#0F0F12] border-gray-200 dark:border-[#1F1F23]">
         <CardHeader>
-          <CardTitle className="text-lg font-bold flex items-center gap-2">
-            <FileText className="w-4 h-4" />
-            Report Export Options
-          </CardTitle>
+          <CardTitle className="text-lg font-bold flex items-center gap-2">Report Export Options</CardTitle>
           <CardDescription>Generate and share compliance reports</CardDescription>
         </CardHeader>
         <CardContent>
@@ -554,11 +519,9 @@ export default function ReportsAnalyticsContent() {
               </CardContent>
               <CardFooter className="flex gap-2">
                 <Button variant="outline" size="sm" className="gap-1">
-                  <FileDown className="w-3.5 h-3.5" />
                   PDF
                 </Button>
                 <Button variant="outline" size="sm" className="gap-1">
-                  <FileDown className="w-3.5 h-3.5" />
                   CSV
                 </Button>
               </CardFooter>
@@ -575,11 +538,9 @@ export default function ReportsAnalyticsContent() {
               </CardContent>
               <CardFooter className="flex gap-2">
                 <Button variant="outline" size="sm" className="gap-1">
-                  <FileDown className="w-3.5 h-3.5" />
                   PDF
                 </Button>
                 <Button variant="outline" size="sm" className="gap-1">
-                  <FileDown className="w-3.5 h-3.5" />
                   CSV
                 </Button>
               </CardFooter>
@@ -596,11 +557,9 @@ export default function ReportsAnalyticsContent() {
               </CardContent>
               <CardFooter className="flex gap-2">
                 <Button variant="outline" size="sm" className="gap-1">
-                  <FileDown className="w-3.5 h-3.5" />
                   PDF
                 </Button>
                 <Button variant="outline" size="sm" className="gap-1">
-                  <FileDown className="w-3.5 h-3.5" />
                   CSV
                 </Button>
               </CardFooter>
@@ -612,3 +571,4 @@ export default function ReportsAnalyticsContent() {
   )
 }
 
+export default ReportsAnalyticsContent

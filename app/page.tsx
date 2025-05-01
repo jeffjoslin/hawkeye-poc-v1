@@ -4,4 +4,3 @@ export default function Home() {
   // Changed to redirect to login instead of dashboard
   redirect("/dashboard")
 }
-

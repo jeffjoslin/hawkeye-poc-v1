@@ -52,7 +52,9 @@ export default function UploadSessionForm({ onClose }: UploadSessionFormProps) {
       <div className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="user">User/Admin Name</Label>
+            <Label htmlFor="user" className="text-foreground">
+              User/Admin Name
+            </Label>
             <Input
               id="user"
               name="user"
@@ -64,7 +66,9 @@ export default function UploadSessionForm({ onClose }: UploadSessionFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="organization">Organization</Label>
+            <Label htmlFor="organization" className="text-foreground">
+              Organization
+            </Label>
             <Input
               id="organization"
               name="organization"
@@ -77,7 +81,9 @@ export default function UploadSessionForm({ onClose }: UploadSessionFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="title">Session Title</Label>
+          <Label htmlFor="title" className="text-foreground">
+            Session Title
+          </Label>
           <Input
             id="title"
             name="title"
@@ -89,7 +95,9 @@ export default function UploadSessionForm({ onClose }: UploadSessionFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="goals">Declared Goals</Label>
+          <Label htmlFor="goals" className="text-foreground">
+            Declared Goals
+          </Label>
           <Textarea
             id="goals"
             name="goals"
@@ -105,7 +113,7 @@ export default function UploadSessionForm({ onClose }: UploadSessionFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label>Session Recording</Label>
+          <Label className="text-foreground">Session Recording</Label>
           <FileUpload
             onUploadComplete={handleUploadComplete}
             acceptedTypes="video/mp4,video/webm,video/quicktime"
@@ -116,7 +124,7 @@ export default function UploadSessionForm({ onClose }: UploadSessionFormProps) {
 
       <DialogFooter className="gap-2 sm:gap-0">
         <DialogClose asChild>
-          <Button type="button" variant="outline">
+          <Button type="button" variant="outline" className="text-foreground">
             Cancel
           </Button>
         </DialogClose>
@@ -131,4 +139,3 @@ export default function UploadSessionForm({ onClose }: UploadSessionFormProps) {
     </form>
   )
 }
-

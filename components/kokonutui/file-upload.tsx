@@ -157,7 +157,7 @@ export default function FileUpload({
               <Upload className="h-6 w-6 text-gray-500 dark:text-gray-400" />
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-medium">Drag and drop your session recording</p>
+              <p className="text-sm font-medium text-foreground">Drag and drop your session recording</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 or <span className="text-primary font-medium">browse files</span>
               </p>
@@ -177,7 +177,7 @@ export default function FileUpload({
                 <FileVideo className="h-5 w-5 text-gray-500 dark:text-gray-400" />
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-medium truncate max-w-[200px] sm:max-w-xs">{file.name}</p>
+                <p className="text-sm font-medium truncate max-w-[200px] sm:max-w-xs text-foreground">{file.name}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
               </div>
             </div>
@@ -189,7 +189,7 @@ export default function FileUpload({
 
           {isUploading && (
             <div className="mt-4 space-y-2">
-              <div className="flex justify-between text-xs">
+              <div className="flex justify-between text-xs text-foreground">
                 <span>Uploading...</span>
                 <span>{progress}%</span>
               </div>
@@ -208,4 +208,3 @@ export default function FileUpload({
     </div>
   )
 }
-

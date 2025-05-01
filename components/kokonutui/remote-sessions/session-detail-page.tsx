@@ -33,7 +33,7 @@ const sampleSessions = [
     date: "2025-03-27T10:30:00",
     duration: "45m",
     status: "green",
-    title: "Quarterly Report Review",
+    title: "Recording Details",
     goals: "Review Q1 financial reports and prepare summary for board meeting",
     summary:
       "User accessed financial reporting system, reviewed Q1 reports, and created presentation slides for board meeting. All actions aligned with declared goals.",
@@ -73,7 +73,7 @@ const sampleSessions = [
     date: "2025-03-26T14:15:00",
     duration: "32m",
     status: "yellow",
-    title: "Patient Record Updates",
+    title: "Recording Details",
     goals: "Update patient insurance information",
     summary:
       "User updated patient insurance records as intended but also accessed patient medical history which was outside the declared scope.",
@@ -175,7 +175,7 @@ const sampleSessions = [
     organization: "TechSolutions LLC",
     date: "2025-03-24T13:10:00",
     duration: "37m",
-    status: "orange",
+    status: "yellow", // Changed from orange to yellow
     title: "Network Configuration",
     goals: "Update network security settings for development servers",
     summary:
@@ -215,7 +215,7 @@ const sampleSessions = [
     organization: "Global Banking Corp",
     date: "2025-03-23T09:22:00",
     duration: "45m",
-    status: "purple",
+    status: "yellow", // Changed from purple to yellow
     title: "Customer Account Review",
     goals: "Review flagged customer accounts for suspicious transactions",
     summary:
@@ -303,27 +303,7 @@ export default function SessionDetailPage({ sessionId }: { sessionId: string }) 
             className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800"
           >
             <AlertTriangle className="w-3.5 h-3.5 mr-1" />
-            Concerns
-          </Badge>
-        )
-      case "orange":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 border-orange-200 dark:border-orange-800"
-          >
-            <AlertTriangle className="w-3.5 h-3.5 mr-1" />
             Security Risk
-          </Badge>
-        )
-      case "purple":
-        return (
-          <Badge
-            variant="outline"
-            className="bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border-purple-200 dark:border-purple-800"
-          >
-            <AlertTriangle className="w-3.5 h-3.5 mr-1" />
-            Suspicious Activity
           </Badge>
         )
       case "red":
@@ -386,23 +366,9 @@ export default function SessionDetailPage({ sessionId }: { sessionId: string }) 
   return (
     <Layout>
       <div className="space-y-6">
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            asChild
-            className="bg-gray-100 dark:bg-[#1F1F23] text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-[#2B2B30] border-gray-200 dark:border-[#2B2B30]"
-          >
-            <Link href="/remote-sessions">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Sessions
-            </Link>
-          </Button>
-        </div>
-
         <div className="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
           <div>
-            <h1 className="text-2xl font-bold">{session.title}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Recording Details</h1>
             <div className="flex flex-wrap items-center gap-2 mt-1">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 {session.user} • {session.organization} • {format(new Date(session.date), "MMM d, yyyy h:mm a")}
@@ -611,8 +577,8 @@ export default function SessionDetailPage({ sessionId }: { sessionId: string }) 
                       <StatusBadge status={session.status} />
                       <span>
                         {session.status === "green" && "All activities aligned with declared goals"}
-                        {session.status === "yellow" && "Some activities outside declared scope"}
-                        {session.status === "red" && "Significant deviation from declared goals"}
+                        {session.status === "yellow" && "Security risks detected in session activities"}
+                        {session.status === "red" && "Significant violations of compliance policies"}
                       </span>
                     </div>
 
@@ -645,9 +611,9 @@ export default function SessionDetailPage({ sessionId }: { sessionId: string }) 
                       )}
                       {session.status === "yellow" && (
                         <div className="space-y-2">
-                          <p>Minor compliance concerns detected. Consider the following actions:</p>
+                          <p>Security risks detected. Consider the following actions:</p>
                           <ul className="list-disc pl-5 space-y-1">
-                            <li>Review access policies for medical history records</li>
+                            <li>Review access policies for sensitive records</li>
                             <li>Provide additional training on data access protocols</li>
                             <li>Update declared goals to include all necessary access requirements</li>
                           </ul>
@@ -902,4 +868,3 @@ export default function SessionDetailPage({ sessionId }: { sessionId: string }) 
     </Layout>
   )
 }
-

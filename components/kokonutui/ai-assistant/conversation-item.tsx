@@ -66,4 +66,3 @@ export default function ConversationItem({ conversation, isActive, onClick }: Co
     </div>
   )
 }
-

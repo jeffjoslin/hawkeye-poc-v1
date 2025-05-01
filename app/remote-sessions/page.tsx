@@ -3,4 +3,3 @@ import RemoteSessionsPage from "@/components/kokonutui/remote-sessions/remote-se
 export default function RemoteSessions() {
   return <RemoteSessionsPage />
 }
-

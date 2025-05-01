@@ -31,4 +31,3 @@ export function ThemeProvider({ children, defaultTheme = "dark", ...props }: The
     </div>
   )
 }
-

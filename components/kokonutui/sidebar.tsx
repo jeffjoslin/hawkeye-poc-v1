@@ -1,10 +1,8 @@
 "use client"
 
 import type React from "react"
-
 import {
   BarChart2,
-  Menu,
   Monitor,
   Eye,
   Brain,
@@ -16,20 +14,40 @@ import {
   Webhook,
   Key,
   ChevronLeft,
+  X,
 } from "lucide-react"
-
 import { Home } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 
-export default function Sidebar() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+interface SidebarProps {
+  isOpen: boolean
+  toggleSidebar: () => void
+}
+
+export default function Sidebar({ isOpen, toggleSidebar }: SidebarProps) {
   const [showSettings, setShowSettings] = useState(false)
   const pathname = usePathname()
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Check if we're on mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
 
   function handleNavigation() {
-    setIsMobileMenuOpen(false)
+    // On mobile, close the sidebar when navigating
+    if (isMobile) {
+      toggleSidebar()
+    }
   }
 
   function toggleSettings() {
@@ -53,7 +71,7 @@ export default function Sidebar() {
       <div
         className={`flex items-center px-3 py-2 text-sm rounded-md transition-colors ${
           isActive
-            ? "bg-gray-100 dark:bg-[#1F1F23] text-gray-900 dark:text-white"
+            ? "bg-gray-100 dark:bg-[#2B2B30] text-gray-900 dark:text-white"
             : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-[#1F1F23]"
         }`}
       >
@@ -99,35 +117,27 @@ export default function Sidebar() {
 
   return (
     <>
-      <button
-        type="button"
-        className="lg:hidden fixed top-4 left-4 z-[70] p-2 rounded-lg bg-white dark:bg-[#0F0F12] shadow-md"
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-      >
-        <Menu className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-      </button>
-      <nav
-        className={`
-              fixed inset-y-0 left-0 z-[70] w-64 bg-white dark:bg-[#0F0F12] transform transition-transform duration-200 ease-in-out
-              lg:translate-x-0 lg:static lg:w-64 border-r border-gray-200 dark:border-[#1F1F23]
-              ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
-          `}
+      {/* Sidebar - fixed the width and positioning */}
+      <div
+        className={`fixed inset-y-0 left-0 z-30 w-64 bg-gray-50 dark:bg-[#1A1A1E] border-r border-gray-200 dark:border-[#1F1F23] transform transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:relative lg:translate-x-0 ${!isOpen && !isMobile ? "lg:w-0 lg:overflow-hidden" : ""}`}
       >
         <div className="h-full flex flex-col">
-          <div className="h-16 px-6 flex items-center justify-between border-b border-gray-200 dark:border-[#1F1F23]">
+          <div className="h-16 px-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex-shrink-0 w-8 h-8 bg-amber-500 dark:bg-amber-600 rounded-full flex items-center justify-center">
                 <Eye className="w-5 h-5 text-white" />
               </div>
               <span className="text-lg font-semibold text-gray-900 dark:text-white">Hawkeye</span>
             </div>
-            <button
-              type="button"
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#1F1F23] transition-colors"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              <Menu className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-            </button>
+
+            {/* Close button for mobile */}
+            {isMobile && (
+              <button onClick={toggleSidebar} className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-[#1F1F23]">
+                <X className="h-5 w-5 text-gray-500" />
+              </button>
+            )}
           </div>
 
           {!showSettings ? (
@@ -135,9 +145,6 @@ export default function Sidebar() {
               <div className="flex-1 overflow-y-auto py-4 px-4">
                 <div className="space-y-6">
                   <div>
-                    <div className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                      Overview
-                    </div>
                     <div className="space-y-1">
                       <NavItem href="/dashboard" icon={Home}>
                         Dashboard
@@ -153,7 +160,7 @@ export default function Sidebar() {
                 </div>
               </div>
 
-              <div className="px-4 py-4 border-t border-gray-200 dark:border-[#1F1F23]">
+              <div className="px-4 py-4 border-gray-200 dark:border-[#1F1F23]">
                 <div className="space-y-1">
                   <NavItem icon={Settings} onClick={toggleSettings}>
                     System Settings
@@ -194,15 +201,12 @@ export default function Sidebar() {
             </div>
           )}
         </div>
-      </nav>
+      </div>
 
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-[65] lg:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
+      {/* Overlay for mobile */}
+      {isOpen && isMobile && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden" onClick={toggleSidebar} />
       )}
     </>
   )
 }
-

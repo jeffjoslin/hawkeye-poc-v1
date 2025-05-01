@@ -3,4 +3,3 @@ import AIAssistantPage from "@/components/kokonutui/ai-assistant/ai-assistant-pa
 export default function AIAssistant() {
   return <AIAssistantPage />
 }
-

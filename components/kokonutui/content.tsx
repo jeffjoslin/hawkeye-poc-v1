@@ -1,17 +1,6 @@
 "use client"
 
-import {
-  Calendar,
-  AlertTriangle,
-  CheckCircle,
-  Eye,
-  Clock,
-  Search,
-  Filter,
-  Monitor,
-  ShieldAlert,
-  AlertCircle,
-} from "lucide-react"
+import { Calendar, AlertTriangle, CheckCircle, Eye, Clock, Search, Filter, Monitor, ShieldAlert } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -26,16 +15,13 @@ import {
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import SessionChart from "./session-chart"
-import UploadSession from "./upload-session"
 
-// Sample data for the dashboard
+// Sample data for the dashboard - updated to use only green, yellow, and red statuses
 const metrics = {
   totalSessions: 128,
-  greenStatus: 75,
-  yellowStatus: 23,
-  orangeStatus: 12,
-  purpleStatus: 8,
-  redStatus: 10,
+  greenStatus: 75, // Compliant
+  yellowStatus: 43, // Security Risk (combined previous yellow, orange, and purple)
+  redStatus: 10, // Violations
   pendingReview: 8,
   complianceRate: 58.6, // percentage
 }
@@ -56,7 +42,7 @@ const todaySessions = [
     department: "HR",
     time: "11:45 AM",
     duration: "18m",
-    status: "yellow",
+    status: "yellow", // Changed from concerns to security risk
     intent: "Employee record updates",
   },
   {
@@ -83,7 +69,7 @@ const todaySessions = [
     department: "IT",
     time: "3:10 PM",
     duration: "37m",
-    status: "orange",
+    status: "yellow", // Changed from orange to yellow
     intent: "Network configuration update",
   },
   {
@@ -92,7 +78,7 @@ const todaySessions = [
     department: "Finance",
     time: "4:22 PM",
     duration: "28m",
-    status: "purple",
+    status: "yellow", // Changed from purple to yellow
     intent: "Customer account review",
   },
 ]
@@ -118,7 +104,7 @@ const recentSessions = [
     date: "Yesterday",
     time: "2:45 PM",
     duration: "37m",
-    status: "yellow",
+    status: "yellow", // Changed from concerns to security risk
     intent: "Invoice processing",
     summary:
       "User processed invoices as intended but also accessed employee salary information which was outside the declared scope.",
@@ -153,7 +139,7 @@ const recentSessions = [
     date: "Mar 25",
     time: "3:40 PM",
     duration: "41m",
-    status: "yellow",
+    status: "yellow", // Changed from concerns to security risk
     intent: "Contract review",
     summary: "User reviewed contracts as intended but also accessed archived cases not related to current contracts.",
   },
@@ -164,7 +150,7 @@ const recentSessions = [
     date: "Mar 25",
     time: "1:10 PM",
     duration: "37m",
-    status: "orange",
+    status: "yellow", // Changed from orange to yellow
     intent: "Network configuration",
     summary:
       "User modified firewall settings that significantly reduced network security posture. Multiple critical security controls were disabled.",
@@ -176,7 +162,7 @@ const recentSessions = [
     date: "Mar 24",
     time: "9:22 AM",
     duration: "45m",
-    status: "purple",
+    status: "yellow", // Changed from purple to yellow
     intent: "Customer account review",
     summary:
       "User accessed accounts outside of assigned portfolio, including high-value accounts. Actions followed unusual patterns with multiple failed access attempts to restricted areas.",
@@ -192,10 +178,6 @@ export default function Content() {
         return <CheckCircle className="w-4 h-4 text-emerald-500" />
       case "yellow":
         return <AlertTriangle className="w-4 h-4 text-amber-500" />
-      case "orange":
-        return <ShieldAlert className="w-4 h-4 text-orange-500" />
-      case "purple":
-        return <AlertCircle className="w-4 h-4 text-purple-500" />
       case "red":
         return <AlertTriangle className="w-4 h-4 text-red-500" />
       default:
@@ -220,21 +202,7 @@ export default function Content() {
         return (
           <span className={`${baseClasses} bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400`}>
             <AlertTriangle className="w-3.5 h-3.5" />
-            Concerns
-          </span>
-        )
-      case "orange":
-        return (
-          <span className={`${baseClasses} bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400`}>
-            <ShieldAlert className="w-3.5 h-3.5" />
             Security Risk
-          </span>
-        )
-      case "purple":
-        return (
-          <span className={`${baseClasses} bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400`}>
-            <AlertCircle className="w-3.5 h-3.5" />
-            Suspicious Activity
           </span>
         )
       case "red":
@@ -256,14 +224,17 @@ export default function Content() {
 
   return (
     <div className="space-y-6">
-      {/* Action buttons */}
-      <div className="flex justify-end">
-        <UploadSession buttonClassName="dark:bg-[#1F1F23] dark:text-white dark:hover:bg-[#2B2B30] dark:border-[#2B2B30]" />
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Dashboard</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Overview of compliance monitoring and session analytics
+        </p>
       </div>
 
-      {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-white dark:bg-[#0F0F12] border-gray-200 dark:border-[#1F1F23]">
+      {/* Metrics Cards - All in one row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {/* Total Sessions */}
+        <Card className="bg-white dark:bg-[#0F0F12] border-gray-200 dark:border-[#1F1F23] h-full">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Total Sessions</CardTitle>
           </CardHeader>
@@ -273,7 +244,8 @@ export default function Content() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white dark:bg-[#0F0F12] border-gray-200 dark:border-[#1F1F23]">
+        {/* Compliance Rate */}
+        <Card className="bg-white dark:bg-[#0F0F12] border-gray-200 dark:border-[#1F1F23] h-full">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Compliance Rate</CardTitle>
           </CardHeader>
@@ -285,7 +257,8 @@ export default function Content() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white dark:bg-[#0F0F12] border-gray-200 dark:border-[#1F1F23]">
+        {/* Status Breakdown */}
+        <Card className="bg-white dark:bg-[#0F0F12] border-gray-200 dark:border-[#1F1F23] h-full">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Status Breakdown</CardTitle>
           </CardHeader>
@@ -293,23 +266,15 @@ export default function Content() {
             <div className="flex items-center justify-between text-sm flex-wrap gap-y-2">
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                <span>{metrics.greenStatus}</span>
+                <span>{metrics.greenStatus} Compliant</span>
               </div>
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                <span>{metrics.yellowStatus}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-                <span>{metrics.orangeStatus}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-                <span>{metrics.purpleStatus}</span>
+                <span>{metrics.yellowStatus} Security Risk</span>
               </div>
               <div className="flex items-center gap-1">
                 <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                <span>{metrics.redStatus}</span>
+                <span>{metrics.redStatus} Violations</span>
               </div>
             </div>
             <div className="flex h-2 mt-2 overflow-hidden rounded-full">
@@ -322,14 +287,6 @@ export default function Content() {
                 style={{ width: `${(metrics.yellowStatus / metrics.totalSessions) * 100}%` }}
               ></div>
               <div
-                className="bg-orange-500"
-                style={{ width: `${(metrics.orangeStatus / metrics.totalSessions) * 100}%` }}
-              ></div>
-              <div
-                className="bg-purple-500"
-                style={{ width: `${(metrics.purpleStatus / metrics.totalSessions) * 100}%` }}
-              ></div>
-              <div
                 className="bg-red-500"
                 style={{ width: `${(metrics.redStatus / metrics.totalSessions) * 100}%` }}
               ></div>
@@ -337,7 +294,8 @@ export default function Content() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white dark:bg-[#0F0F12] border-gray-200 dark:border-[#1F1F23]">
+        {/* High Risk Sessions */}
+        <Card className="bg-white dark:bg-[#0F0F12] border-gray-200 dark:border-[#1F1F23] h-full">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">High Risk Sessions</CardTitle>
           </CardHeader>
@@ -353,90 +311,32 @@ export default function Content() {
             </Button>
           </CardFooter>
         </Card>
-      </div>
 
-      {/* New Risk Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="bg-white dark:bg-[#0F0F12] border-gray-200 dark:border-[#1F1F23]">
+        {/* Security Risk Sessions */}
+        <Card className="bg-white dark:bg-[#0F0F12] border-gray-200 dark:border-[#1F1F23] h-full">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-orange-500" />
+              <ShieldAlert className="w-4 h-4 text-amber-500" />
               Security Risk Sessions
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{metrics.orangeStatus}</div>
+            <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">{metrics.yellowStatus}</div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              {Math.round((metrics.orangeStatus / metrics.totalSessions) * 100)}% of total sessions
+              {Math.round((metrics.yellowStatus / metrics.totalSessions) * 100)}% of total sessions
             </p>
-            <div className="mt-4 space-y-3">
-              {recentSessions
-                .filter((session) => session.status === "orange")
-                .slice(0, 2)
-                .map((session) => (
-                  <div key={session.id} className="flex items-start gap-2">
-                    <ShieldAlert className="w-4 h-4 text-orange-500 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium">
-                        {session.user} <span className="text-xs font-normal text-gray-500">• {session.department}</span>
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {session.date}, {session.time}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-            </div>
           </CardContent>
           <CardFooter className="pt-0">
-            <Button variant="link" size="sm" className="px-0 text-orange-600 dark:text-orange-400">
+            <Button variant="link" size="sm" className="px-0 text-amber-600 dark:text-amber-400">
               View all security risks
-            </Button>
-          </CardFooter>
-        </Card>
-
-        <Card className="bg-white dark:bg-[#0F0F12] border-gray-200 dark:border-[#1F1F23]">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-purple-500" />
-              Suspicious Activity Sessions
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{metrics.purpleStatus}</div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              {Math.round((metrics.purpleStatus / metrics.totalSessions) * 100)}% of total sessions
-            </p>
-            <div className="mt-4 space-y-3">
-              {recentSessions
-                .filter((session) => session.status === "purple")
-                .slice(0, 2)
-                .map((session) => (
-                  <div key={session.id} className="flex items-start gap-2">
-                    <AlertCircle className="w-4 h-4 text-purple-500 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium">
-                        {session.user} <span className="text-xs font-normal text-gray-500">• {session.department}</span>
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {session.date}, {session.time}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </CardContent>
-          <CardFooter className="pt-0">
-            <Button variant="link" size="sm" className="px-0 text-purple-600 dark:text-purple-400">
-              View all suspicious activities
             </Button>
           </CardFooter>
         </Card>
       </div>
 
       {/* Chart and Today's Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 bg-white dark:bg-[#0F0F12] border-gray-200 dark:border-[#1F1F23] overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="bg-white dark:bg-[#0F0F12] border-gray-200 dark:border-[#1F1F23] overflow-hidden">
           <CardHeader className="text-center">
             <CardTitle className="text-lg font-bold flex items-center justify-center gap-2">
               <Eye className="w-4 h-4" />
@@ -445,7 +345,9 @@ export default function Content() {
             <CardDescription>Session compliance status over time</CardDescription>
           </CardHeader>
           <CardContent className="px-0 pt-0 pb-4">
-            <SessionChart />
+            <div className="h-[280px]">
+              <SessionChart />
+            </div>
           </CardContent>
         </Card>
 
@@ -510,15 +412,14 @@ export default function Content() {
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="recent">
+          <Tabs defaultValue="all">
             <TabsList className="mb-4">
-              <TabsTrigger value="recent">Recent</TabsTrigger>
+              <TabsTrigger value="all">All Sessions</TabsTrigger>
+              <TabsTrigger value="compliant">Compliant</TabsTrigger>
               <TabsTrigger value="security-risk">Security Risk</TabsTrigger>
-              <TabsTrigger value="suspicious">Suspicious Activity</TabsTrigger>
-              <TabsTrigger value="flagged">Flagged</TabsTrigger>
-              <TabsTrigger value="pending">Pending Review</TabsTrigger>
+              <TabsTrigger value="violations">Violations</TabsTrigger>
             </TabsList>
-            <TabsContent value="recent">
+            <TabsContent value="all">
               <div className="overflow-hidden rounded-md border border-gray-200 dark:border-[#1F1F23]">
                 <div className="relative w-full overflow-auto">
                   <table className="w-full caption-bottom text-sm">
@@ -572,19 +473,7 @@ export default function Content() {
                             {session.status === "yellow" && (
                               <div className="flex items-center">
                                 <div className="h-2 w-2 rounded-full bg-amber-500 mr-2"></div>
-                                <span className="text-xs">Concerns</span>
-                              </div>
-                            )}
-                            {session.status === "orange" && (
-                              <div className="flex items-center">
-                                <div className="h-2 w-2 rounded-full bg-orange-500 mr-2"></div>
                                 <span className="text-xs">Security Risk</span>
-                              </div>
-                            )}
-                            {session.status === "purple" && (
-                              <div className="flex items-center">
-                                <div className="h-2 w-2 rounded-full bg-purple-500 mr-2"></div>
-                                <span className="text-xs">Suspicious Activity</span>
                               </div>
                             )}
                             {session.status === "red" && (
@@ -646,6 +535,105 @@ export default function Content() {
                 </div>
               </div>
             </TabsContent>
+            <TabsContent value="compliant">
+              <div className="overflow-hidden rounded-md border border-gray-200 dark:border-[#1F1F23]">
+                <div className="relative w-full overflow-auto">
+                  <table className="w-full caption-bottom text-sm">
+                    <thead className="[&_tr]:border-b">
+                      <tr className="border-b border-gray-200 dark:border-[#1F1F23] bg-gray-50 dark:bg-[#1F1F23]/50">
+                        <th className="h-10 px-4 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
+                          User
+                        </th>
+                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
+                          Department
+                        </th>
+                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
+                          Date/Time
+                        </th>
+                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
+                          Duration
+                        </th>
+                        <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
+                          Details
+                        </th>
+                        <th className="h-10 px-2 text-right align-middle font-medium text-gray-500 dark:text-gray-400">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="[&_tr:last-child]:border-0">
+                      {recentSessions
+                        .filter((session) => session.status === "green")
+                        .map((session) => (
+                          <tr
+                            key={session.id}
+                            className="border-b border-gray-200 dark:border-[#1F1F23] hover:bg-gray-50 dark:hover:bg-[#1F1F23]/50 transition-colors"
+                          >
+                            <td className="p-2 px-4 align-middle">
+                              <div className="font-medium">{session.user}</div>
+                            </td>
+                            <td className="p-2 align-middle text-xs text-gray-500 dark:text-gray-400">
+                              {session.department}
+                            </td>
+                            <td className="p-2 align-middle text-xs text-gray-500 dark:text-gray-400">
+                              {session.date}, {session.time}
+                            </td>
+                            <td className="p-2 align-middle text-xs text-gray-500 dark:text-gray-400">
+                              {session.duration}
+                            </td>
+                            <td className="p-2 align-middle text-xs">{session.summary}</td>
+                            <td className="p-2 align-middle text-right">
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                    <Eye className="h-4 w-4" />
+                                    <span className="sr-only">View details</span>
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[600px]">
+                                  <DialogHeader>
+                                    <DialogTitle>Session Details: {session.id}</DialogTitle>
+                                    <DialogDescription>
+                                      Recorded on {session.date} at {session.time} • Duration: {session.duration}
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  <div className="space-y-4 py-4">
+                                    <div className="flex justify-between items-center">
+                                      <div>
+                                        <h3 className="font-medium">{session.user}</h3>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">{session.department}</p>
+                                      </div>
+                                      <StatusBadge status={session.status} />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                      <h4 className="text-sm font-medium">Declared Intent</h4>
+                                      <p className="text-sm p-3 bg-gray-50 dark:bg-[#1F1F23] rounded-md">
+                                        {session.intent}
+                                      </p>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                      <h4 className="text-sm font-medium">AI Summary</h4>
+                                      <p className="text-sm p-3 bg-gray-50 dark:bg-[#1F1F23] rounded-md">
+                                        {session.summary}
+                                      </p>
+                                    </div>
+
+                                    <div className="pt-2">
+                                      <Button className="w-full">Watch Full Session Recording</Button>
+                                    </div>
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </TabsContent>
             <TabsContent value="security-risk">
               <div className="overflow-hidden rounded-md border border-gray-200 dark:border-[#1F1F23]">
                 <div className="relative w-full overflow-auto">
@@ -674,7 +662,7 @@ export default function Content() {
                     </thead>
                     <tbody className="[&_tr:last-child]:border-0">
                       {recentSessions
-                        .filter((session) => session.status === "orange")
+                        .filter((session) => session.status === "yellow")
                         .map((session) => (
                           <tr
                             key={session.id}
@@ -745,7 +733,7 @@ export default function Content() {
                 </div>
               </div>
             </TabsContent>
-            <TabsContent value="suspicious">
+            <TabsContent value="violations">
               <div className="overflow-hidden rounded-md border border-gray-200 dark:border-[#1F1F23]">
                 <div className="relative w-full overflow-auto">
                   <table className="w-full caption-bottom text-sm">
@@ -764,7 +752,7 @@ export default function Content() {
                           Duration
                         </th>
                         <th className="h-10 px-2 text-left align-middle font-medium text-gray-500 dark:text-gray-400">
-                          Suspicious Activity
+                          Violation Details
                         </th>
                         <th className="h-10 px-2 text-right align-middle font-medium text-gray-500 dark:text-gray-400">
                           Actions
@@ -773,7 +761,7 @@ export default function Content() {
                     </thead>
                     <tbody className="[&_tr:last-child]:border-0">
                       {recentSessions
-                        .filter((session) => session.status === "purple")
+                        .filter((session) => session.status === "red")
                         .map((session) => (
                           <tr
                             key={session.id}
@@ -844,16 +832,6 @@ export default function Content() {
                 </div>
               </div>
             </TabsContent>
-            <TabsContent value="flagged">
-              <div className="p-8 text-center">
-                <p className="text-gray-500 dark:text-gray-400">Flagged sessions will appear here</p>
-              </div>
-            </TabsContent>
-            <TabsContent value="pending">
-              <div className="p-8 text-center">
-                <p className="text-gray-500 dark:text-gray-400">Sessions pending review will appear here</p>
-              </div>
-            </TabsContent>
           </Tabs>
         </CardContent>
         <CardFooter>
@@ -868,4 +846,3 @@ export default function Content() {
     </div>
   )
 }
-

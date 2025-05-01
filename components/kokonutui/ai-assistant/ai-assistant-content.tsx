@@ -89,7 +89,7 @@ export default function AIAssistantContent() {
           <Menu className="h-5 w-5" />
           <span className="sr-only">Toggle sidebar</span>
         </Button>
-        <h1 className="text-xl font-bold">AI Assistant</h1>
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white">AI Assistant</h1>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-1 overflow-hidden">
@@ -167,4 +167,3 @@ export default function AIAssistantContent() {
     </div>
   )
 }
-

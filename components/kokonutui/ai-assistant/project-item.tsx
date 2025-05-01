@@ -60,4 +60,3 @@ export default function ProjectItem({ project, isActive, onClick }: ProjectItemP
     </div>
   )
 }
-
